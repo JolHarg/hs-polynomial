@@ -1,0 +1,78 @@
+cabal-version:      3.16
+name:               jolharg-polynomial
+version:            0.0.1
+synopsis:           Polynomial types and classes
+description:        Use Polynomial.Class and whichever implementation of polynomial you'd prefer.
+license:            AGPL-3.0-or-later
+license-file:       LICENSE
+author:             Dan Dart
+maintainer:         cabal@dandart.co.uk
+-- copyright:
+category:           Math
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+-- extra-source-files:
+
+common shared-properties
+  default-language:   GHC2024
+  default-extensions: UnicodeSyntax
+  if !arch(wasm32)
+    ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:
+    -Wall -Werror -haddock -Weverything -Wno-unsafe -Wno-safe
+    -Wno-missing-import-lists -Wno-missing-export-lists
+    -Wno-implicit-prelude -Wno-missing-safe-haskell-mode
+    -Wno-missing-kind-signatures -Wno-missing-poly-kind-signatures
+    -Wno-missing-local-signatures -Wno-all-missed-specialisations
+    -Wno-missed-specialisations -Wno-missing-role-annotations
+    -Wno-unrecognised-warning-flags
+  ghcjs-options:      -dedupe
+
+library
+  hs-source-dirs:     lib
+  if arch(javascript)
+    js-sources: jsbits/emcc-config.js
+  default-language:   GHC2024
+  default-extensions: UnicodeSyntax
+  ghc-options:
+    -Wall -Werror -haddock -Weverything -Wno-unsafe -Wno-safe
+    -Wno-missing-import-lists -Wno-missing-export-lists
+    -Wno-implicit-prelude -Wno-missing-safe-haskell-mode
+    -Wno-missing-kind-signatures -Wno-missing-poly-kind-signatures
+    -Wno-missing-local-signatures -Wno-all-missed-specialisations
+    -Wno-missed-specialisations -Wno-missing-role-annotations
+    -Wno-unrecognised-warning-flags
+
+  ghcjs-options:      -dedupe
+  build-depends:
+    , base    ^>=4.22
+  exposed-modules:
+    Polynomial
+    Polynomial.Class
+    Polynomial.Error
+    Polynomial.NonEmpty
+  other-modules:
+    Polynomial.Internal
+
+test-suite jolharg-polynomial-test
+  import:             shared-properties
+  if (arch(javascript) || arch(wasm32))
+    buildable: False
+  hs-source-dirs:     test
+  type:               exitcode-stdio-1.0
+  main-is:            Spec.hs
+  other-modules:      
+  build-tool-depends: hspec-discover:hspec-discover
+  default-language:   GHC2024
+  default-extensions: UnicodeSyntax
+  build-depends:
+    -- , base   ^>=4.22
+    , hspec  ^>=2.11.15
+    -- , jolharg-polynomial  ^>=0.0.1
+-- , hspec-core ^>=2.11.15
+-- , hspec-expectations ^>=0.8.4
+-- , QuickCheck ^>=2.17
+
+source-repository head
+  type:     git
+  location: https://github.com/JolHarg/hs-polynomial.git

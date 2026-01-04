@@ -1,0 +1,14 @@
+.stack-work
+dist*
+.ghc.*
+google.json
+*.hi
+*.o
+result*
+.direnv
+hie.yaml
+.env
+jwt.secret
+.hie
+stan.html
+*.png
