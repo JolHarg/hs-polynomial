@@ -75,4 +75,4 @@ showPolyHTML i
 --
 
 renderPiece :: (PrettyNum a, Eq a, Num a) => (Int -> String) -> (Int, a) -> String
-renderPiece showPolyFn (i, a) = (if signum a == 1 then "+ " else "- ") <> displayCoefficient (abs a) <> showPolyFn i
+renderPiece showPolyFn (i, a) = (if signum a == 1 then "+ " else "- ") <> (if i == 0 then displayNum (abs a) else displayCoefficient (abs a)) <> showPolyFn i

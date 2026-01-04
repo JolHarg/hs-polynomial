@@ -1,29 +1,31 @@
 {-# LANGUAGE OverloadedLists #-}
+{-# OPTIONS_GHC -Wwarn #-}
 
 module Polynomial.Sparse (PolynomialSparse) where
 
 -- import Data.Char
 import Data.IntMap        qualified as IM
 import Data.List          qualified as L
+import Data.List.NonEmpty qualified as LNE
 import Polynomial.Class
 import Polynomial.Error
 import Polynomial.Internal
 
 newtype PolynomialSparse a = PolynomialSparse {
-    getPolynomialSparse :: IntMap a
+    getPolynomialSparse :: IM.IntMap a
 } deriving stock (Eq, Show)
 
-instance (Num a) => IsPolynomial (PolynomialNE a) where
+instance (Num a) => IsPolynomial (PolynomialSparse a) where
     x = PolynomialSparse undefined
 
 instance FromNumList PolynomialSparse a where
     fromNumList :: [a] -> PolynomialSparse a
-    fromNumList = Polynomial . undefined
+    fromNumList = PolynomialSparse . undefined
     
     fromNumNonEmpty :: LNE.NonEmpty a -> PolynomialSparse a
     fromNumNonEmpty = PolynomialSparse . undefined
 
-instance FromNumListEither Polynomial a where
+instance FromNumListEither PolynomialSparse a where
     fromNumListEither :: [a] -> Either PolynomialError (PolynomialSparse a)
     fromNumListEither = undefined
     

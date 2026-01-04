@@ -3,6 +3,7 @@
 
 module Polynomial.NonEmpty (PolynomialNE) where
 
+import Control.Exception
 -- import Data.Char
 import Data.List          qualified as L
 import Data.List.NonEmpty (NonEmpty((:|)))
@@ -25,6 +26,24 @@ instance Num a => Num (PolynomialNE a) where
 
 instance (Num a) => IsPolynomial (PolynomialNE a) where
     x = PolynomialNE (LNE.fromList [0, 1])
+
+instance (Num a, Eq a) => FromNumList PolynomialNE a where
+    -- >>> pretty <$> fromIntList [1,2,3]
+    -- Right "1 + 2x + 3x\178"
+    --
+    fromNumList ∷ [a] → PolynomialNE a
+    fromNumList xs
+        | null xs = throw EmptyListException
+        | all (== 0) xs = throw AllZeroException
+        | otherwise = PolynomialNE . LNE.fromList $ xs
+
+    -- >>> pretty <$> (fromNonEmpty . fromList $ [1,2,3,4])
+    -- Right "1 + 2x + 3x\178 + 4x\179"
+    --
+    fromNumNonEmpty ∷ NonEmpty a → PolynomialNE a
+    fromNumNonEmpty xs
+        | all (== 0) xs = throw AllZeroException
+        | otherwise = PolynomialNE $ xs
 
 instance (Num a, Eq a) => FromNumListEither PolynomialNE a where
     -- >>> pretty <$> fromIntList [1,2,3]

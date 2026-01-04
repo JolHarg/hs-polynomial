@@ -44,11 +44,11 @@ instance Num a => Num (Polynomial a) where
     negate (Polynomial xs) = Polynomial (fmap negate xs)
 
 instance (PrettyNum a, Num a, Eq a) => PrettyPoly (Polynomial a) where
-    -- >>> putStrLn . prettyPoly . Polynomial . fromNumList $ [1,2,3,4]
+    -- >>> putStrLn . prettyPolyReverse . Polynomial . fromNumList $ [1,2,3,4]
     -- 1 + 2x + 3x² + 4x³
     --
 
-    -- >>> putStrLn . prettyPoly . Polynomial . fromNumList $ [0, 2,3,(-1),0]
+    -- >>> putStrLn . prettyPolyConventional . Polynomial . fromNumList $ [0, 2,3,(-1),0]
 
     prettyPolyReverse ∷ Polynomial a → String
     prettyPolyReverse = fixLeadingSign
@@ -69,11 +69,11 @@ instance (PrettyNum a, Num a, Eq a) => PrettyPoly (Polynomial a) where
 
 
 instance (PrettyNum a, Num a, Eq a) => PrettyPolyHTML (Polynomial a) where
-    -- >>> putStrLn . prettyPoly . Polynomial . fromNumList $ [1,2,3,4]
+    -- >>> putStrLn . prettyPolyReverseHTML . Polynomial . fromNumList $ [1,2,3,4]
     -- 1 + 2x + 3x² + 4x³
     --
 
-    -- >>> putStrLn . prettyPoly . Polynomial . fromNumList $ [0, 2,3,(-1),0]
+    -- >>> putStrLn . prettyPolyConventionalHTML . Polynomial . fromNumList $ [0, 2,3,(-1),0]
 
     prettyPolyReverseHTML ∷ Polynomial a → String
     prettyPolyReverseHTML = fixLeadingSign

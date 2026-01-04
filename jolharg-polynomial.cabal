@@ -46,11 +46,13 @@ library
   ghcjs-options:      -dedupe
   build-depends:
     , base    ^>=4.22
+    , containers ^>=0.8
   exposed-modules:
     Polynomial
     Polynomial.Class
     Polynomial.Error
     Polynomial.NonEmpty
+    Polynomial.Sparse
   other-modules:
     Polynomial.Internal
 
@@ -61,17 +63,19 @@ test-suite jolharg-polynomial-test
   hs-source-dirs:     test
   type:               exitcode-stdio-1.0
   main-is:            Spec.hs
-  other-modules:      
+  other-modules:      PolynomialSpec
+                      Polynomial.NonEmptySpec
+                      Polynomial.SparseSpec
   build-tool-depends: hspec-discover:hspec-discover
   default-language:   GHC2024
   default-extensions: UnicodeSyntax
   build-depends:
-    -- , base   ^>=4.22
+    , base   ^>=4.22
     , hspec  ^>=2.11.15
-    -- , jolharg-polynomial  ^>=0.0.1
+    , jolharg-polynomial  ^>=0.0.1
 -- , hspec-core ^>=2.11.15
 -- , hspec-expectations ^>=0.8.4
--- , QuickCheck ^>=2.17
+    , QuickCheck ^>=2.17
 
 source-repository head
   type:     git
