@@ -1,4 +1,4 @@
-cabal-version:      3.16
+cabal-version:      3.14
 name:               jolharg-polynomial
 version:            0.0.1
 synopsis:           Polynomial types and classes
@@ -52,6 +52,7 @@ library
     Polynomial.Class
     Polynomial.Error
     Polynomial.NonEmpty
+    Polynomial.Pretty
     Polynomial.Sparse
   other-modules:
     Polynomial.Internal

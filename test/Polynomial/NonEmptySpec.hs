@@ -3,6 +3,7 @@ module Polynomial.NonEmptySpec (spec) where
 import Data.List.NonEmpty qualified as LNE
 import Polynomial.Class
 import Polynomial.NonEmpty
+import Polynomial.Pretty
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Test.QuickCheck
@@ -25,16 +26,16 @@ spec = do
                 let eqn :: PolynomialNE Int
                     eqn = fromNumNonEmpty $ LNE.fromList [1,0,1,0,1]
                 it "should render the correct equation conventionally" $
-                    prettyPolyConventional eqn === "𝑥⁴ + 𝑥² + 1"
+                    prettyPoly defaultPrettyPolyOptions eqn === "𝑥⁴ + 𝑥² + 1"
                 it "should render the correct equation in reverse" $
-                    prettyPolyReverse eqn === "1 + 𝑥² + 𝑥⁴"
+                    prettyPoly defaultPrettyPolyOptions { termOrder = termOrderReverse } eqn === "1 + 𝑥² + 𝑥⁴"
             describe "𝑥⁴" $ do
                 let eqn :: PolynomialNE Int
                     eqn = fromNumNonEmpty $ LNE.fromList [0,0,0,0,1]
                 it "should render the correct equation conventionally" $
-                    prettyPolyConventional eqn === "𝑥⁴"
+                    prettyPoly defaultPrettyPolyOptions eqn === "𝑥⁴"
                 it "should render the correct equation in reverse" $
-                    prettyPolyReverse eqn === "𝑥⁴"
+                    prettyPoly defaultPrettyPolyOptions { termOrder = termOrderReverse } eqn === "𝑥⁴"
         {-
         xdescribe "with a specific binomial multiplication" $ do
             let eqn :: PolynomialNE Int

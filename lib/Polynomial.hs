@@ -8,6 +8,7 @@ import Data.List.NonEmpty qualified as LNE
 import Polynomial.Class
 import Polynomial.Error
 import Polynomial.Internal
+import Polynomial.Pretty
 
 newtype Polynomial a = Polynomial {
     getPolynomial :: [a]
@@ -20,6 +21,7 @@ instance FromNumList Polynomial a where
     fromNumList :: [a] -> Polynomial a
     fromNumList = Polynomial
     
+instance FromNumNonEmpty Polynomial a where
     fromNumNonEmpty :: LNE.NonEmpty a -> Polynomial a
     fromNumNonEmpty = Polynomial . LNE.toList
 
@@ -27,10 +29,16 @@ instance FromNumListEither Polynomial a where
     fromNumListEither :: [a] -> Either PolynomialError (Polynomial a)
     fromNumListEither = Right . Polynomial
     
+instance FromNumNonEmptyEither Polynomial a where
     fromNumNonEmptyEither :: LNE.NonEmpty a -> Either PolynomialError (Polynomial a)
     fromNumNonEmptyEither = Right . Polynomial . LNE.toList
 
--- >>> Polynomial (fromNumList [1, 2]) + Polynomial (fromNumList [2, 3])
+instance (Num a, Enum a) => Differentiable Polynomial a where
+    differentiate (Polynomial xs) = Polynomial . drop 1 . fmap (\(pow, coeff) -> coeff * pow) $ zip [0..] xs
+
+instance (Num a, Enum a, Fractional a) => Integrable Polynomial a where
+    integrate cval (Polynomial xs) = Polynomial $ (cval :) . fmap (\(pow, coeff) -> coeff / (pow + 1)) $ zip [0..] xs
+
 instance Num a => Num (Polynomial a) where
     Polynomial [] + Polynomial []         = Polynomial []
     Polynomial (a : as) + Polynomial (b : bs) = Polynomial $ (a + b) : getPolynomial (Polynomial as + Polynomial bs)
@@ -44,56 +52,15 @@ instance Num a => Num (Polynomial a) where
     negate (Polynomial xs) = Polynomial (fmap negate xs)
 
 instance (PrettyNum a, Num a, Eq a) => PrettyPoly (Polynomial a) where
-    -- >>> putStrLn . prettyPolyReverse . Polynomial . fromNumList $ [1,2,3,4]
-    -- 1 + 2x + 3x² + 4x³
-    --
-
-    -- >>> putStrLn . prettyPolyConventional . Polynomial . fromNumList $ [0, 2,3,(-1),0]
-
-    prettyPolyReverse ∷ Polynomial a → String
-    prettyPolyReverse = fixLeadingSign
+    prettyPoly ∷ PrettyPolyOptions -> Polynomial a → String
+    prettyPoly PrettyPolyOptions { termOrder, displayXFn, displayPowerFn } = fixLeadingSign
         . L.unwords
-        . fmap (renderPiece showPoly)
-        . L.filter removeNullCoefficient
-        . L.zip [0..]
-        . getPolynomial
-
-    prettyPolyConventional ∷ Polynomial a → String
-    prettyPolyConventional = fixLeadingSign
-        . L.unwords
+        . termOrder
         . L.reverse
-        . fmap (renderPiece showPoly)
+        . fmap (renderTerm displayXFn displayPowerFn)
         . L.filter removeNullCoefficient
         . L.zip [0..]
         . getPolynomial
-
-
-instance (PrettyNum a, Num a, Eq a) => PrettyPolyHTML (Polynomial a) where
-    -- >>> putStrLn . prettyPolyReverseHTML . Polynomial . fromNumList $ [1,2,3,4]
-    -- 1 + 2x + 3x² + 4x³
-    --
-
-    -- >>> putStrLn . prettyPolyConventionalHTML . Polynomial . fromNumList $ [0, 2,3,(-1),0]
-
-    prettyPolyReverseHTML ∷ Polynomial a → String
-    prettyPolyReverseHTML = fixLeadingSign
-        . L.unwords
-        . fmap (renderPiece showPolyHTML)
-        . L.filter removeNullCoefficient
-        . L.zip [0..]
-        . getPolynomial
-
-    prettyPolyConventionalHTML ∷ Polynomial a → String
-    prettyPolyConventionalHTML = fixLeadingSign
-        . L.unwords
-        . L.reverse
-        . fmap (renderPiece showPolyHTML)
-        . L.filter removeNullCoefficient
-        . L.zip [0..]
-        . getPolynomial
-
--- mul :: Polynomial -> Polynomial -> Polynomial
--- mul (Polynomial (x :| xs)) (Polynomial (y :| ys)) = undefined --
 
 instance Num a => EvalPoly Polynomial a where
     evalPolyAt at poly = sum $ fmap (\(i, val) -> val * at ^ (i :: Integer)) $ zip [0..] (getPolynomial poly)

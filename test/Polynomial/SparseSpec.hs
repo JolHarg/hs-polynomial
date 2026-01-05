@@ -1,6 +1,7 @@
 module Polynomial.SparseSpec (spec) where
 
 import Polynomial.Class
+import Polynomial.Pretty
 import Polynomial.Sparse
 import Test.Hspec
 import Test.Hspec.QuickCheck
@@ -24,16 +25,16 @@ spec = do
                 let eqn :: PolynomialSparse Int
                     eqn = fromNumList [1,0,1,0,1]
                 it "should render the correct equation conventionally" $
-                    prettyPolyConventional eqn === "𝑥⁴ + 𝑥² + 1"
+                    prettyPoly defaultPrettyPolyOptions eqn === "𝑥⁴ + 𝑥² + 1"
                 it "should render the correct equation in reverse" $
-                    prettyPolyReverse eqn === "1 + 𝑥² + 𝑥⁴"
+                    prettyPoly defaultPrettyPolyOptions { termOrder = termOrderReverse } eqn === "1 + 𝑥² + 𝑥⁴"
             describe "𝑥⁴" $ do
                 let eqn :: PolynomialSparse Int
                     eqn = fromNumList [0,0,0,0,1]
                 it "should render the correct equation conventionally" $
-                    prettyPolyConventional eqn === "𝑥⁴"
+                    prettyPoly defaultPrettyPolyOptions eqn === "𝑥⁴"
                 it "should render the correct equation in reverse" $
-                    prettyPolyReverse eqn === "𝑥⁴"
+                    prettyPoly defaultPrettyPolyOptions { termOrder = termOrderReverse } eqn === "𝑥⁴"
         {-
         xdescribe "with a specific binomial multiplication" $ do
             let eqn :: PolynomialSparse Int
@@ -41,7 +42,7 @@ spec = do
                     * fromNumList @PolynomialSparse [1,1]
                     * fromNumList @PolynomialSparse [1,1]
             it "should render the correct equation conventionally" $
-                prettyPolyConventional eqn === "𝑥³ + 3𝑥² + 3𝑥 + 1"
+                prettyPoly defaultPrettyPolyOptions eqn === "𝑥³ + 3𝑥² + 3𝑥 + 1"
             it "should render the correct equation in reverse" $
-                prettyPolyReverse eqn === "1 + 3𝑥 + 3𝑥² + 𝑥³"
+                prettyPoly defaultPrettyPolyOptions { termOrder = termOrderReverse } eqn === "1 + 3𝑥 + 3𝑥² + 𝑥³"
         -}
