@@ -1,7 +1,8 @@
 module Polynomial.Pretty where
 
+import Data.List qualified as L
+import Data.List.NonEmpty qualified as LNE
 import Data.Ratio
-import Polynomial.Internal
 
 class PrettyNum n where
     displayNum :: n -> String
@@ -49,10 +50,6 @@ instance {-# OVERLAPS #-} (Show a, Num a, Eq a) => PrettyNum (Ratio a) where
         | denominator r == 1 = show (numerator r)
         | otherwise = "(" <> show (numerator r) <> "/" <> show (denominator r) <> ")"
 
-type DisplayXFn = Int -> String
-
-type DisplayPowerFn = Int -> String
-
 type TermOrder = [String] -> [String]
 
 termOrderForward :: TermOrder
@@ -60,6 +57,31 @@ termOrderForward = id
 
 termOrderReverse :: TermOrder
 termOrderReverse = reverse
+
+type DisplayPowerFn = Int -> String
+
+displayPowerAscii ∷ DisplayPowerFn
+displayPowerAscii = ("^" <>) . show
+
+displayPowerUnicode ∷ DisplayPowerFn
+displayPowerUnicode = fmap (powerDigit . read @Int . L.singleton) . show where
+    powerDigit ∷ Int → Char
+    powerDigit = (LNE.fromList "⁰¹²³⁴⁵⁶⁷⁸⁹" LNE.!!)
+
+displayPowerHTML ∷ DisplayPowerFn
+displayPowerHTML = ("<sup>" <>) . (<> "</sup>") . show
+
+type DisplayXFn = Int -> String
+
+displayXAscii :: DisplayXFn
+displayXAscii i
+    | i == 0 = ""
+    | otherwise = "x"
+
+displayXUnicodeSupp :: DisplayXFn
+displayXUnicodeSupp i
+    | i == 0 = ""
+    | otherwise = "𝑥"
 
 data PrettyPolyOptions = PrettyPolyOptions {
     termOrder :: TermOrder, -- You could use reverse or id here

@@ -21,26 +21,3 @@ fixLeadingSign s = (if s !! 0 == '+' then "" else "-") <> drop 2 s
 
 removeNullCoefficient :: (Num a, Eq a) => (i, a) -> Bool
 removeNullCoefficient = (/= 0) . snd
-
--- Display power functions
-displayPowerAscii ∷ Int → String
-displayPowerAscii = ("^" <>) . show
-
-displayPowerUnicode ∷ Int → String
-displayPowerUnicode = fmap (powerDigit . read @Int . L.singleton) . show where
-    powerDigit ∷ Int → Char
-    powerDigit = (LNE.fromList "⁰¹²³⁴⁵⁶⁷⁸⁹" LNE.!!)
-
-displayPowerHTML ∷ Int → String
-displayPowerHTML = ("<sup>" <>) . (<> "</sup>") . show
-
--- Display X functions
-displayXAscii :: Int -> String
-displayXAscii i
-    | i == 0 = ""
-    | otherwise = "x"
-
-displayXUnicodeSupp :: Int -> String
-displayXUnicodeSupp i
-    | i == 0 = ""
-    | otherwise = "𝑥"
