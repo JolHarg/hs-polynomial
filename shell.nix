@@ -29,8 +29,7 @@ mkShell rec {
         libxdmcp # ???
         zlib.dev
         # krank
-        pcre.dev
-    ];
+            ];
     shellHook = ''
         # cabal update >/dev/null
         set -euo pipefail
